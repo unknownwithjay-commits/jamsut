@@ -871,7 +871,6 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
                 local rem = rs:FindFirstChild("HatchMaxEggs", true)
                 if rem and rem:IsA("RemoteFunction") then
                     rem:InvokeServer("1")
-                    rem:InvokeServer("Common Egg")
                 end
             end)
         end
@@ -904,7 +903,7 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
         TriggerNearbyPrompt("egg", 80)
         TriggerNearbyPrompt("incubator", 18)
         TriggerNearbyPrompt("claim", 18)
-        TryClickGuiAction("TakeEggGui", {"claim", "collect egg", "take egg", "hatch"}, 1.5)
+        TryClickGuiAction("TakeEggGui", {"claim", "collect egg", "take egg"}, 1.5)
     end
 
     local function RunEventCheck()
