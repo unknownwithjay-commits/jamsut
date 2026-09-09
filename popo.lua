@@ -1589,7 +1589,7 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
 
     local TabIcons = {
         Farm   = "rbxassetid://10734965572",
-        Flock  = "rbxassetid://10709775095",
+        Flock  = "rbxassetid://13847426177", -- Icon Ayam / Chicken
         Plot   = "rbxassetid://6031265976",
         Battle = "rbxassetid://10734975692",
         Events = "rbxassetid://6031075931",
@@ -1848,7 +1848,80 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
         end)
     end
 
-    -- TAB CREATION (6 TABS RAPI)
+    -- HELPER BARU: GRID 2-KOLOM UNTUK FILTER RARITY AYAM
+    local function AddRarityRow(parent)
+        local row = Instance.new("Frame", parent)
+        row.Size = UDim2.new(1, 0, 0, 26)
+        row.BackgroundTransparency = 1
+        row.BorderSizePixel = 0
+        return row
+    end
+
+    local function AddRarityChip(row, label, key, rarityColor, isRight)
+        local b = Instance.new("TextButton", row)
+        b.Size = UDim2.new(0.5, -3, 1, 0)
+        b.Position = isRight and UDim2.new(0.5, 3, 0, 0) or UDim2.new(0, 0, 0, 0)
+        b.BackgroundColor3 = C.Card
+        b.Text = ""
+        b.AutoButtonColor = false
+        Instance.new("UICorner", b).CornerRadius = UDim.new(0, 5)
+        local bStroke = Instance.new("UIStroke", b)
+        bStroke.Color = C.Border
+        bStroke.Thickness = 1
+
+        local dot = Instance.new("Frame", b)
+        dot.Size = UDim2.fromOffset(7, 7)
+        dot.Position = UDim2.new(0, 8, 0.5, -3.5)
+        dot.BackgroundColor3 = rarityColor or C.Txt
+        dot.BorderSizePixel = 0
+        Instance.new("UICorner", dot).CornerRadius = UDim.new(1, 0)
+
+        local l = Instance.new("TextLabel", b)
+        l.Size = UDim2.new(1, -48, 1, 0)
+        l.Position = UDim2.fromOffset(19, 0)
+        l.BackgroundTransparency = 1
+        l.Text = label
+        l.TextColor3 = C.Txt
+        l.TextSize = 10
+        l.Font = Enum.Font.GothamBold
+        l.TextXAlignment = Enum.TextXAlignment.Left
+
+        local pill = Instance.new("Frame", b)
+        pill.Size = UDim2.fromOffset(26, 14)
+        pill.Position = UDim2.new(1, -30, 0.5, -7)
+        pill.BackgroundColor3 = C.Off
+        pill.BorderSizePixel = 0
+        Instance.new("UICorner", pill).CornerRadius = UDim.new(1, 0)
+        local pillStroke = Instance.new("UIStroke", pill)
+        pillStroke.Color = C.Border
+        pillStroke.Thickness = 1
+
+        local knob = Instance.new("Frame", pill)
+        knob.Size = UDim2.fromOffset(10, 10)
+        knob.Position = UDim2.fromOffset(2, 2)
+        knob.BackgroundColor3 = Color3.fromRGB(245, 245, 250)
+        knob.BorderSizePixel = 0
+        Instance.new("UICorner", knob).CornerRadius = UDim.new(1, 0)
+
+        local function upd(on)
+            tw(pill, {BackgroundColor3 = (on and C.Red or C.Off)})
+            tw(pillStroke, {Color = (on and C.RedGlow or C.Border)})
+            tw(knob, {Position = (on and UDim2.fromOffset(14, 2) or UDim2.fromOffset(2, 2))})
+            tw(bStroke, {Color = (on and (rarityColor or C.Red) or C.Border)})
+            tw(l, {TextColor3 = (on and C.Txt or C.Sub)})
+            tw(dot, {BackgroundTransparency = (on and 0 or 0.6)})
+        end
+
+        ToggleUpdaters[key] = upd
+        upd(Flags[key])
+
+        b.MouseButton1Click:Connect(function()
+            local ns = not Flags[key]
+            SetFlag(key, ns)
+        end)
+    end
+
+    -- TAB CREATION (6 TABS)
     local FarmPage   = MakeTab("Farm",   1)
     local FlockPage  = MakeTab("Flock",  2)
     local PlotPage   = MakeTab("Plot",   3)
@@ -1856,26 +1929,38 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
     local EventsPage = MakeTab("Events", 5)
     local InfoPage   = MakeTab("Info",   6)
 
-    -- 1. FARM PAGE (Kembali bersih, fokus farm scrap & telur)
+    -- 1. FARM PAGE
     AddToggle(FarmPage, "Auto Take Eggs",       "AutoTakeEggs")
     AddToggle(FarmPage, "Auto Grab Scraps",      "AutoGrabScraps")
     AddToggle(FarmPage, "Auto Recycle Scrap",    "AutoRecycleScrap")
     AddSlider(FarmPage, "Scrap Capacity", 50, 20, "ScrapCapacity")
     AddToggle(FarmPage, "Auto Open Eggs",        "AutoOpenEggs")
 
-    -- 2. FLOCK PAGE (Khusus Auto Sell & Filter Rarity)
+    -- 2. FLOCK PAGE (COMPACT 1-LAYAR DENGAN GRID 2-KOLOM)
     AddToggle(FlockPage, "Auto Sell Chickens",    "AutoSellChickens")
     AddButton(FlockPage, "SELL CHICKENS NOW", function()
         ExecuteAutoSell()
     end)
-    AddToggle(FlockPage, "Sell [Common]",         "SellCommon")
-    AddToggle(FlockPage, "Sell [Uncommon]",       "SellUncommon")
-    AddToggle(FlockPage, "Sell [Rare]",           "SellRare")
-    AddToggle(FlockPage, "Sell [Epic]",           "SellEpic")
-    AddToggle(FlockPage, "Sell [Legendary]",      "SellLegendary")
-    AddToggle(FlockPage, "Sell [Mythic/Divine]",  "SellMythic")
-    AddToggle(FlockPage, "Sell [Cosmic]",         "SellCosmic")
-    AddToggle(FlockPage, "Sell [Secret]",         "SellSecret")
+
+    -- Row 1: Common & Uncommon
+    local r1 = AddRarityRow(FlockPage)
+    AddRarityChip(r1, "Common",    "SellCommon",    Color3.fromRGB(200, 205, 215), false)
+    AddRarityChip(r1, "Uncommon",  "SellUncommon",  Color3.fromRGB(46, 204, 113),  true)
+
+    -- Row 2: Rare & Epic
+    local r2 = AddRarityRow(FlockPage)
+    AddRarityChip(r2, "Rare",      "SellRare",      Color3.fromRGB(52, 152, 219),  false)
+    AddRarityChip(r2, "Epic",      "SellEpic",      Color3.fromRGB(155, 89, 182),  true)
+
+    -- Row 3: Legendary & Mythic/Divine
+    local r3 = AddRarityRow(FlockPage)
+    AddRarityChip(r3, "Legendary", "SellLegendary", Color3.fromRGB(241, 196, 15),  false)
+    AddRarityChip(r3, "Mythic+",   "SellMythic",    Color3.fromRGB(231, 76, 60),   true)
+
+    -- Row 4: Cosmic & Secret
+    local r4 = AddRarityRow(FlockPage)
+    AddRarityChip(r4, "Cosmic",    "SellCosmic",    Color3.fromRGB(26, 188, 156),  false)
+    AddRarityChip(r4, "Secret",    "SellSecret",    Color3.fromRGB(255, 105, 180), true)
 
     -- 3. PLOT PAGE
     AddToggle(PlotPage, "Auto Rebirth", "AutoRebirth", true)
