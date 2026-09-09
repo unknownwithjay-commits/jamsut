@@ -867,9 +867,14 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
             ExecuteBasePad("UpgradeCoop", { "upgrade coop", "coop" }, { "upgrade coop" }, 2.5)
         end
         if Flags.AutoOpenEggs then
-            SafeCall("HatchMaxEggs")
-            SafeCall("HatchEggs", "common", 10)
-            TryClickGuiAction("OpenEggs", { "hatch max", "open max", "max hatch", "max", "hatch" }, 1.5)
+            pcall(function()
+                local rem = rs:FindFirstChild("HatchMaxEggs", true)
+                if rem and rem:IsA("RemoteFunction") then
+                    rem:InvokeServer("common")
+                    rem:InvokeServer()
+                end
+            end)
+            TryClickGuiAction("OpenEggsMax", { "max", "all" }, 1.5)
         end
     end
 
