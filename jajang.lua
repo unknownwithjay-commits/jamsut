@@ -1945,19 +1945,20 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
 
     -- TAB CREATION (6 TABS)
     local FarmPage   = MakeTab("Farm",   1)
-    local FlockPage  = MakeTab("Flock",  2)
-    local PlotPage   = MakeTab("Plot",   3)
+    local PlotPage   = MakeTab("Plot",   2)
+    local FlockPage  = MakeTab("Flock",  3)
     local BattlePage = MakeTab("Battle", 4)
     local EventsPage = MakeTab("Events", 5)
     local InfoPage   = MakeTab("Info",   6)
 
     -- 1. FARM PAGE
     AddToggle(FarmPage, "Auto Take Eggs",       "AutoTakeEggs")
+    AddToggle(FarmPage, "Auto Open Eggs",        "AutoOpenEggs") 
     AddToggle(FarmPage, "Auto Grab Scraps",      "AutoGrabScraps")
     AddToggle(FarmPage, "Auto Recycle Scrap",    "AutoRecycleScrap")
+    AddToggle(FarmPage, "Anti-AFK",  "AntiAFK")
     AddSlider(FarmPage, "Scrap Capacity", 50, 20, "ScrapCapacity")
-    AddToggle(FarmPage, "Auto Open Eggs",        "AutoOpenEggs")
-    AddToggle(FarmPage, "Anti-AFK",  "AntiAFK") 
+  
 
     -- 2. FLOCK PAGE (COMPACT 1-LAYAR DENGAN GRID 2-KOLOM)
     AddToggle(FlockPage, "Auto Sell Chickens",    "AutoSellChickens")
