@@ -71,6 +71,14 @@ RunService.Stepped:Connect(function()
     end)
 end)
 
+local vu = game:GetService("VirtualUser")
+player.Idled:Connect(function()
+    pcall(function()
+        vu:CaptureController()
+        vu:ClickButton2(Vector2.new())
+    end)
+end)
+
 local function SafeCall(remoteName, ...)
     local r = rs:FindFirstChild(remoteName, true)
     if not r then return false end
