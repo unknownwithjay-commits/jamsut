@@ -1405,8 +1405,8 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
     MinBtn.Position = UDim2.new(1, -58, 0.5, -12)
     MinBtn.BackgroundColor3 = Color3.fromRGB(24, 27, 36)
     MinBtn.Text = "-"
-    MinBtn.TextColor3 = C.Sub
     MinBtn.TextSize = 13
+    MinBtn.TextColor3 = C.Sub
     MinBtn.Font = Enum.Font.GothamBold
     Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 5)
     local MinStroke = Instance.new("UIStroke", MinBtn)
@@ -1589,6 +1589,7 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
 
     local TabIcons = {
         Farm   = "rbxassetid://10734965572",
+        Flock  = "rbxassetid://10709775095",
         Plot   = "rbxassetid://6031265976",
         Battle = "rbxassetid://10734975692",
         Events = "rbxassetid://6031075931",
@@ -1597,7 +1598,7 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
 
     local MakeTab = function(name, order)
         local btn = Instance.new("TextButton", TabFrame)
-        btn.Size = UDim2.new(0.2, -4, 1, 0)
+        btn.Size = UDim2.new(1 / 6, -4, 1, 0)
         btn.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
         btn.BorderSizePixel = 0
         btn.Text = ""
@@ -1609,20 +1610,20 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
         bStroke.Thickness = 1
 
         local icon = Instance.new("ImageLabel", btn)
-        icon.Size = UDim2.fromOffset(14, 14)
+        icon.Size = UDim2.fromOffset(13, 13)
         icon.AnchorPoint = Vector2.new(0, 0.5)
-        icon.Position = UDim2.new(0, 8, 0.5, 0)
+        icon.Position = UDim2.new(0, 6, 0.5, 0)
         icon.BackgroundTransparency = 1
         icon.Image = TabIcons[name] or "rbxassetid://6031154871"
         icon.ImageColor3 = C.Sub
 
         local label = Instance.new("TextLabel", btn)
-        label.Size = UDim2.new(1, -26, 1, 0)
-        label.Position = UDim2.fromOffset(24, 0)
+        label.Size = UDim2.new(1, -22, 1, 0)
+        label.Position = UDim2.fromOffset(21, 0)
         label.BackgroundTransparency = 1
         label.Text = name
         label.TextColor3 = C.Sub
-        label.TextSize = 10
+        label.TextSize = 9.5
         label.Font = Enum.Font.GothamBold
         label.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -1847,34 +1848,36 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
         end)
     end
 
+    -- TAB CREATION (6 TABS RAPI)
     local FarmPage   = MakeTab("Farm",   1)
-    local PlotPage   = MakeTab("Plot",   2)
-    local BattlePage = MakeTab("Battle", 3)
-    local EventsPage = MakeTab("Events", 4)
-    local InfoPage   = MakeTab("Info",   5)
+    local FlockPage  = MakeTab("Flock",  2)
+    local PlotPage   = MakeTab("Plot",   3)
+    local BattlePage = MakeTab("Battle", 4)
+    local EventsPage = MakeTab("Events", 5)
+    local InfoPage   = MakeTab("Info",   6)
 
-    -- FARM PAGE CONTROLS
+    -- 1. FARM PAGE (Kembali bersih, fokus farm scrap & telur)
     AddToggle(FarmPage, "Auto Take Eggs",       "AutoTakeEggs")
     AddToggle(FarmPage, "Auto Grab Scraps",      "AutoGrabScraps")
     AddToggle(FarmPage, "Auto Recycle Scrap",    "AutoRecycleScrap")
     AddSlider(FarmPage, "Scrap Capacity", 50, 20, "ScrapCapacity")
     AddToggle(FarmPage, "Auto Open Eggs",        "AutoOpenEggs")
 
-    -- AUTO SELL CHICKENS CONTROLS
-    AddToggle(FarmPage, "Auto Sell Chickens",    "AutoSellChickens")
-    AddButton(FarmPage, "SELL CHICKENS NOW", function()
+    -- 2. FLOCK PAGE (Khusus Auto Sell & Filter Rarity)
+    AddToggle(FlockPage, "Auto Sell Chickens",    "AutoSellChickens")
+    AddButton(FlockPage, "SELL CHICKENS NOW", function()
         ExecuteAutoSell()
     end)
-    AddToggle(FarmPage, "Sell [Common]",         "SellCommon")
-    AddToggle(FarmPage, "Sell [Uncommon]",       "SellUncommon")
-    AddToggle(FarmPage, "Sell [Rare]",           "SellRare")
-    AddToggle(FarmPage, "Sell [Epic]",           "SellEpic")
-    AddToggle(FarmPage, "Sell [Legendary]",      "SellLegendary")
-    AddToggle(FarmPage, "Sell [Mythic/Divine]",  "SellMythic")
-    AddToggle(FarmPage, "Sell [Cosmic]",         "SellCosmic")
-    AddToggle(FarmPage, "Sell [Secret]",         "SellSecret")
+    AddToggle(FlockPage, "Sell [Common]",         "SellCommon")
+    AddToggle(FlockPage, "Sell [Uncommon]",       "SellUncommon")
+    AddToggle(FlockPage, "Sell [Rare]",           "SellRare")
+    AddToggle(FlockPage, "Sell [Epic]",           "SellEpic")
+    AddToggle(FlockPage, "Sell [Legendary]",      "SellLegendary")
+    AddToggle(FlockPage, "Sell [Mythic/Divine]",  "SellMythic")
+    AddToggle(FlockPage, "Sell [Cosmic]",         "SellCosmic")
+    AddToggle(FlockPage, "Sell [Secret]",         "SellSecret")
 
-    -- PLOT PAGE CONTROLS
+    -- 3. PLOT PAGE
     AddToggle(PlotPage, "Auto Rebirth", "AutoRebirth", true)
     AddButton(PlotPage, "[LOCK] Set Recycler Pad", function(btn)
         local root = GetRoot()
@@ -1890,7 +1893,7 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
     AddToggle(PlotPage, "Auto Upgrade Recycler", "AutoUpgradeRecycler")
     AddToggle(PlotPage, "Auto Upgrade Coop",     "AutoUpgradeCoop")
 
-    -- BATTLE PAGE CONTROLS
+    -- 4. BATTLE PAGE
     AddToggle(BattlePage, "Auto Start Tower",     "AutoStartTower")
     AddToggle(BattlePage, "Auto Arena",           "AutoArena")
     AddToggle(BattlePage, "Auto Close No Thanks", "AutoNoThanks")
@@ -1900,12 +1903,13 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
         Notify("ERDEVA HUB", "Sent chicken to Pit", 2)
     end)
 
-    -- EVENTS PAGE CONTROLS
+    -- 5. EVENTS PAGE
     AddToggle(EventsPage, "Auto UFO", "AutoUFO")
     AddBadge(EventsPage, "Auto Golden Goose",    "COMING SOON")
     AddBadge(EventsPage, "Auto Chicken Boss",    "COMING SOON")
     AddBadge(EventsPage, "Auto Admin Abuse",    "COMING SOON")
 
+    -- 6. INFO PAGE
     local LiveCarriedLabel = nil
     local LiveTrialLabel = nil
 
