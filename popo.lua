@@ -1589,7 +1589,7 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
 
     local TabIcons = {
         Farm   = "rbxassetid://10734965572",
-        Flock  = "rbxassetid://13847426177", -- Icon Ayam / Chicken
+        Flock  = "rbxassetid://10709775195",
         Plot   = "rbxassetid://6031265976",
         Battle = "rbxassetid://10734975692",
         Events = "rbxassetid://6031075931",
