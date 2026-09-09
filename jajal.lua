@@ -1168,15 +1168,21 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
         isSellingNow = false
     end
 
-    -- LOOP ANTI-AFK AMAN (LOMPAT SETIAP 4 MENIT)
+    -- LOOP ANTI-AFK 
+    local lastAfkJump = tick()
     task.spawn(function()
         while IsRunning do
-            task.wait(240) -- Cek setiap 4 menit
-            if Flags.AntiAFK then
+            task.wait(1)
+            if Flags.AntiAFK and (tick() - lastAfkJump >= 240) then -- Melompat setiap 4 menit
+                lastAfkJump = tick()
                 pcall(function()
-                    local hum = GetHumanoid()
-                    if hum and hum.Health > 0 then
-                        hum.Jump = true 
+                    local char = player.Character
+                    local hum = char and char:FindFirstChildOfClass("Humanoid")
+                    local root = char and (char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso"))
+                    if hum and root and hum.Health > 0 then
+                        hum:ChangeState(Enum.HumanoidStateType.Jumping)
+                        root.AssemblyLinearVelocity = Vector3.new(root.AssemblyLinearVelocity.X, 35, root.AssemblyLinearVelocity.Z)
+                        Notify("ERDEVA HUB", "Anti-AFK: Kept Active", 2)
                     end
                 end)
             end
