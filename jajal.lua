@@ -71,14 +71,6 @@ RunService.Stepped:Connect(function()
     end)
 end)
 
-local vu = game:GetService("VirtualUser")
-player.Idled:Connect(function()
-    pcall(function()
-        vu:CaptureController()
-        vu:ClickButton2(Vector2.new())
-    end)
-end)
-
 local function SafeCall(remoteName, ...)
     local r = rs:FindFirstChild(remoteName, true)
     if not r then return false end
@@ -485,6 +477,7 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
     end
 
     local Flags = {
+        AntiAFK             = false,
         AutoTakeEggs        = false,
         AutoOpenEggs        = false,
         AutoGrabScraps      = false,
@@ -1174,6 +1167,21 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
 
         isSellingNow = false
     end
+
+    -- LOOP ANTI-AFK AMAN (LOMPAT SETIAP 4 MENIT)
+    task.spawn(function()
+        while IsRunning do
+            task.wait(240) -- Cek setiap 4 menit
+            if Flags.AntiAFK then
+                pcall(function()
+                    local hum = GetHumanoid()
+                    if hum and hum.Health > 0 then
+                        hum.Jump = true 
+                    end
+                end)
+            end
+        end
+    end)
 
     -- LOOP 1: POPUPS, EGGS, UPGRADES
     task.spawn(function()
@@ -1943,6 +1951,7 @@ StartMainScript = function(isTrialMode, trialTimeLeft)
     AddToggle(FarmPage, "Auto Recycle Scrap",    "AutoRecycleScrap")
     AddSlider(FarmPage, "Scrap Capacity", 50, 20, "ScrapCapacity")
     AddToggle(FarmPage, "Auto Open Eggs",        "AutoOpenEggs")
+    AddToggle(FarmPage, "Anti-AFK",  "AntiAFK") 
 
     -- 2. FLOCK PAGE (COMPACT 1-LAYAR DENGAN GRID 2-KOLOM)
     AddToggle(FlockPage, "Auto Sell Chickens",    "AutoSellChickens")
